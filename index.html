@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Birthday Message for CEO</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 20px;
+      white-space: pre-wrap;
+      padding: 40px;
+    }
+    .highlight { color: #4EC9B0; font-weight: bold; }
+    .celebration { color: #CE9178; font-weight: bold; }
+    .future { color: #569CD6; font-weight: bold; }
+    .innovation { color: #C586C0; font-weight: bold; }
+    .char {
+      opacity: 0;
+      display: inline-block;
+      animation: fadeIn 0.3s forwards;
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<pre id="output"></pre>
+
+<script>
+const message = [
+  { type: 'text', value: '' },
+  { type: 'span', class: 'celebration', value: '¡Feliz cumpleaños, Alberto!' },
+  { type: 'newline' },
+  { type: 'newline' },
+  { type: 'text', value: 'Hoy celebramos a quien impulsa la ' },
+  { type: 'span', class: 'highlight', value: 'pasión' },
+  { type: 'text', value: ' por el ' },
+  { type: 'span', class: 'highlight', value: 'aprendizaje' },
+  { type: 'newline' },
+  { type: 'text', value: 'y enciende la chispa de la ' },
+  { type: 'span', class: 'innovation', value: 'innovación' },
+  { type: 'text', value: ' en cada paso que damos.' },
+  { type: 'newline' },
+  { type: 'newline' },
+  { type: 'text', value: 'Gracias por recordarnos que el ' },
+  { type: 'span', class: 'highlight', value: 'conocimiento' },
+  { type: 'text', value: ' es el motor del ' },
+  { type: 'span', class: 'future', value: 'futuro' },
+  { type: 'newline' },
+  { type: 'text', value: 'y que los sueños grandes se construyen día a día.' },
+  { type: 'newline' },
+  { type: 'newline' },
+  { type: 'text', value: 'Le deseamos un año lleno de nuevas ideas, conquistas y alegrías.' },
+  { type: 'newline' },
+  { type: 'newline' },
+  { type: 'span', class: 'celebration', value: '¡A seguir construyendo el mañana con valentía e inspiración!' },
+];
+
+const output = document.getElementById('output');
+
+let partIndex = 0;
+let charIndex = 0;
+let currentElement = null;
+
+function typeWriter() {
+  if (partIndex < message.length) {
+    const part = message[partIndex];
+
+    if (part.type === 'newline') {
+      output.appendChild(document.createElement('br'));
+      partIndex++;
+      charIndex = 0;
+      setTimeout(typeWriter, 380);
+    } else {
+      if (charIndex === 0) {
+        // Crea el contenedor de texto o span coloreado
+        if (part.type === 'text') {
+          currentElement = document.createElement('span');
+        } else if (part.type === 'span') {
+          currentElement = document.createElement('span');
+          currentElement.className = part.class;
+        }
+        output.appendChild(currentElement);
+      }
+
+      if (charIndex < part.value.length) {
+        const char = document.createElement('span');
+        char.classList.add('char');
+        char.textContent = part.value[charIndex];
+        currentElement.appendChild(char);
+
+        charIndex++;
+        setTimeout(typeWriter, 40);
+      } else {
+        partIndex++;
+        charIndex = 0;
+        setTimeout(typeWriter, 100);
+      }
+    }
+  }
+}
+
+typeWriter();
+</script>
+
+</body>
+</html>
