@@ -11,6 +11,7 @@
       font-size: 20px;
       white-space: pre-wrap;
       padding: 40px;
+      overflow: hidden;
     }
     .highlight { color: #4EC9B0; font-weight: bold; }
     .celebration { color: #CE9178; font-weight: bold; }
@@ -26,11 +27,19 @@
         opacity: 1;
       }
     }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
   </style>
 </head>
 <body>
 
 <pre id="output"></pre>
+<canvas id="confetti"></canvas>
 
 <script>
 const message = [
@@ -63,7 +72,8 @@ const message = [
 ];
 
 const output = document.getElementById('output');
-
+const canvas = document.getElementById('confetti');
+const ctx = canvas.getContext('2d');
 let partIndex = 0;
 let charIndex = 0;
 let currentElement = null;
@@ -79,7 +89,6 @@ function typeWriter() {
       setTimeout(typeWriter, 380);
     } else {
       if (charIndex === 0) {
-        // Crea el contenedor de texto o span coloreado
         if (part.type === 'text') {
           currentElement = document.createElement('span');
         } else if (part.type === 'span') {
@@ -103,7 +112,55 @@ function typeWriter() {
         setTimeout(typeWriter, 100);
       }
     }
+  } else {
+    launchConfetti(); // <- Cuando termina, lanzamos el confetti
   }
+}
+
+// ---------------- Confetti ----------------
+let confettiParticles = [];
+
+function randomColor() {
+  const colors = ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+function createConfetti() {
+  for (let i = 0; i < 150; i++) {
+    confettiParticles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight - window.innerHeight,
+      width: Math.random() * 10 + 5,
+      height: Math.random() * 10 + 5,
+      color: randomColor(),
+      speed: Math.random() * 3 + 2,
+      angle: Math.random() * Math.PI * 2,
+      rotationSpeed: Math.random() * 0.1 - 0.05,
+    });
+  }
+}
+
+function updateConfetti() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let p of confettiParticles) {
+    p.y += p.speed;
+    p.angle += p.rotationSpeed;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.angle);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.width/2, -p.height/2, p.width, p.height);
+    ctx.restore();
+  }
+  confettiParticles = confettiParticles.filter(p => p.y < window.innerHeight + 50);
+  requestAnimationFrame(updateConfetti);
+}
+
+function launchConfetti() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createConfetti();
+  updateConfetti();
 }
 
 typeWriter();
